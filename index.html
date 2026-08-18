@@ -267,10 +267,95 @@
     .nav-links{ display:none; }
     .photo-badge{ width:220px; height:220px; }
   }
+
+  /* ---------- Intro overlay: web-weave + swing entrance ---------- */
+#introOverlay{
+  position:fixed; inset:0; z-index:1000;
+  background: var(--bg);
+  display:flex; align-items:center; justify-content:center;
+  overflow:hidden;
+  transition: opacity 0.6s ease;
+}
+#introOverlay.fade-out{ opacity:0; pointer-events:none; }
+#introOverlay.hidden{ display:none; }
+
+.intro-web{ width:min(60vw, 420px); height:min(60vw, 420px); opacity:0.85; }
+.intro-web path, .intro-web circle{
+  fill:none; stroke: var(--red); stroke-width:1.2;
+  stroke-dasharray:1; stroke-dashoffset:1;
+  animation: drawWeb 1.1s ease forwards;
+}
+.intro-web .ring2{ animation-delay:0.15s; }
+.intro-web .ring3{ animation-delay:0.3s; }
+.intro-web .ring4{ animation-delay:0.45s; }
+.intro-web .spoke2{ animation-delay:0.05s; }
+.intro-web .spoke3{ animation-delay:0.1s; }
+.intro-web .spoke4{ animation-delay:0.15s; }
+.intro-web .spoke5{ animation-delay:0.2s; }
+.intro-web .spoke6{ animation-delay:0.25s; }
+@keyframes drawWeb{ to{ stroke-dashoffset:0; } }
+
+.intro-label{
+  position:absolute; bottom:14%; left:50%; transform:translateX(-50%);
+  font-family: var(--mono); font-size:0.8rem; color: var(--text-muted);
+  letter-spacing:0.08em; opacity:0; animation: rise 0.6s ease forwards 0.6s;
+}
+.intro-label .blink-dot{ color:var(--red); animation: pulse 1.2s ease-in-out infinite; }
+
+.swing-rig{
+  position:absolute; top:-30px; left:6%;
+  width:2px; height:0; transform-origin: top center;
+  animation: swingAcross 1.7s cubic-bezier(.36,.4,.35,1) forwards;
+  animation-delay:1.05s;
+  opacity:0;
+}
+.swing-thread{
+  position:absolute; top:0; left:0; width:1.5px; height:230px;
+  background: linear-gradient(var(--red), transparent);
+  opacity:0.6;
+}
+.swing-figure{ position:absolute; top:222px; left:-13px; width:26px; height:34px; }
+.swing-figure svg{ width:100%; height:100%; }
+
+@keyframes swingAcross{
+  0%   { left:6%;  transform: rotate(-65deg); opacity:1; }
+  8%   { opacity:1; }
+  50%  { left:50%; transform: rotate(60deg); }
+  92%  { opacity:1; }
+  100% { left:96%; transform: rotate(-25deg); opacity:0; }
+}
 </style>
 </head>
 <body>
 
+<div id="introOverlay">
+  <svg class="intro-web" viewBox="0 0 200 200">
+    <circle class="ring2" cx="100" cy="100" r="30" pathLength="1"/>
+    <circle class="ring3" cx="100" cy="100" r="55" pathLength="1"/>
+    <circle class="ring4" cx="100" cy="100" r="82" pathLength="1"/>
+    <line class="spoke1" x1="100" y1="100" x2="100" y2="8" pathLength="1"/>
+    <line class="spoke2" x1="100" y1="100" x2="163" y2="34" pathLength="1"/>
+    <line class="spoke3" x1="100" y1="100" x2="188" y2="100" pathLength="1"/>
+    <line class="spoke4" x1="100" y1="100" x2="163" y2="166" pathLength="1"/>
+    <line class="spoke5" x1="100" y1="100" x2="100" y2="192" pathLength="1"/>
+    <line class="spoke6" x1="100" y1="100" x2="37" y2="166" pathLength="1"/>
+    <line class="spoke7" x1="100" y1="100" x2="12" y2="100" pathLength="1"/>
+    <line class="spoke8" x1="100" y1="100" x2="37" y2="34" pathLength="1"/>
+  </svg>
+
+  <div class="intro-label"><span class="blink-dot">●</span> Menghubungkan ke jaringan...</div>
+
+  <div class="swing-rig">
+    <div class="swing-thread"></div>
+    <div class="swing-figure">
+      <svg viewBox="0 0 26 34" fill="none">
+        <circle cx="13" cy="6" r="5" fill="var(--red-deep)"/>
+        <path d="M13 11c-4 0-6 3-6 7 0 3 1 5 2 6l-4 6M13 11c4 0 6 3 6 7 0 3-1 5-2 6l4 6M13 18l-6-4M13 18l6-4" stroke="var(--red-deep)" stroke-width="2.4" stroke-linecap="round"/>
+      </svg>
+    </div>
+  </div>
+</div>
+  
 <div class="bg-glow"></div>
 
 <div class="status-strip">
@@ -476,6 +561,18 @@
 </footer>
 
 <script>
+  // Intro overlay: web-weave + swing, lalu tampilkan halaman
+(function(){
+  const overlay = document.getElementById('introOverlay');
+  if (!overlay) return;
+  document.body.style.overflow = 'hidden';
+  setTimeout(() => {
+    overlay.classList.add('fade-out');
+    document.body.style.overflow = '';
+    setTimeout(() => overlay.classList.add('hidden'), 650);
+  }, 3000);
+})();
+  
   const nav = document.getElementById('mainNav');
   window.addEventListener('scroll', () => {
     nav.classList.toggle('scrolled', window.scrollY > 40);
