@@ -1,0 +1,510 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Aris Afriyanto — IT Support, Network Engineer, IT Infrastructure</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg: #F7F1E4;
+    --bg-alt: #F0E8D6;
+    --card: #FFFCF5;
+    --card-hover: #FFF8EC;
+    --red: #C8102E;
+    --red-bright: #E31937;
+    --red-deep: #7A0C1E;
+    --border: rgba(200,16,46,0.18);
+    --text: #241a16;
+    --text-muted: #7a6c62;
+    --mono: 'JetBrains Mono', monospace;
+    --display: 'Space Grotesk', sans-serif;
+    --body: 'Inter', sans-serif;
+  }
+
+  *{ margin:0; padding:0; box-sizing:border-box; }
+  html{ scroll-behavior:smooth; }
+
+  body{
+    background: var(--bg);
+    color: var(--text);
+    font-family: var(--body);
+    line-height:1.6;
+    overflow-x:hidden;
+  }
+
+  ::selection{ background: var(--red); color:#fff; }
+  a{ color:inherit; text-decoration:none; }
+
+  /* modern mesh-gradient backdrop, soft and layered */
+  .bg-glow{
+    position:fixed; inset:0; pointer-events:none; z-index:0;
+    background:
+      radial-gradient(38vw 38vw at 88% -5%, rgba(200,16,46,0.14), transparent 65%),
+      radial-gradient(30vw 30vw at 8% 18%, rgba(200,16,46,0.08), transparent 70%),
+      radial-gradient(45vw 45vw at 50% 100%, rgba(200,16,46,0.07), transparent 70%);
+    filter:blur(10px);
+  }
+
+  /* ---------- Status strip ---------- */
+  .status-strip{
+    position:fixed; top:0; left:0; right:0; z-index:100;
+    background: var(--red);
+    font-family: var(--mono); font-size:0.72rem; color:#fff;
+    padding:6px 5%; display:flex; justify-content:space-between; align-items:center;
+    letter-spacing:0.03em;
+  }
+  .status-strip .dot{
+    display:inline-block; width:7px; height:7px; border-radius:50%;
+    background:#fff; margin-right:8px; box-shadow:0 0 8px #fff;
+    animation: pulse 2s ease-in-out infinite;
+  }
+  @keyframes pulse{ 0%,100%{ opacity:1; transform:scale(1);} 50%{ opacity:0.4; transform:scale(0.8);} }
+
+  /* ---------- Nav ---------- */
+  nav{
+    position:fixed; top:28px; left:0; right:0; z-index:99;
+    display:flex; justify-content:space-between; align-items:center;
+    padding:18px 5%;
+    backdrop-filter: blur(14px);
+    background: rgba(247,241,228,0.7);
+    border-bottom:1px solid transparent;
+    transition: border-color 0.4s ease, background 0.4s ease;
+  }
+  nav.scrolled{ border-bottom-color: var(--border); background: rgba(247,241,228,0.92); }
+  .logo{ font-family: var(--mono); font-size:0.95rem; color: var(--text); }
+  .logo span{ color: var(--red); }
+  .nav-links{ display:flex; gap:34px; font-size:0.88rem; }
+  .nav-links a{ color: var(--text-muted); position:relative; transition: color 0.3s ease; }
+  .nav-links a::after{
+    content:''; position:absolute; left:0; bottom:-5px; width:0; height:1px;
+    background: var(--red); transition: width 0.35s ease;
+  }
+  .nav-links a:hover{ color: var(--text); }
+  .nav-links a:hover::after{ width:100%; }
+
+  section{ position:relative; z-index:2; padding:120px 5% 100px; }
+
+  /* ---------- Hero ---------- */
+  .hero{ min-height:100vh; display:flex; align-items:center; padding-top:160px; gap:60px; }
+  .hero-content{ flex:1; max-width:600px; }
+
+  .eyebrow{
+    font-family: var(--mono); font-size:0.8rem; color: var(--red);
+    letter-spacing:0.15em; text-transform:uppercase; margin-bottom:22px;
+    display:flex; align-items:center; gap:10px;
+    opacity:0; animation: rise 0.8s ease forwards 0.1s;
+  }
+  .eyebrow::before{ content:''; width:26px; height:1px; background: var(--red); }
+
+  h1{
+    font-family: var(--display); font-weight:700;
+    font-size: clamp(2.6rem, 5.6vw, 4.2rem);
+    line-height:1.06; letter-spacing:-0.02em; margin-bottom:22px;
+    opacity:0; animation: rise 0.8s ease forwards 0.25s;
+  }
+  h1 .accent{ color: var(--red); }
+
+  .hero-desc{
+    font-size:1.05rem; color: var(--text-muted); max-width:480px; margin-bottom:20px;
+    opacity:0; animation: rise 0.8s ease forwards 0.4s;
+  }
+
+  .ynwa{
+    font-family: var(--display); font-style:italic; font-size:0.95rem; color: var(--red-deep);
+    margin-bottom:32px; opacity:0; animation: rise 0.8s ease forwards 0.48s;
+    display:flex; align-items:center; gap:8px;
+  }
+  .ynwa svg{ width:16px; height:16px; flex-shrink:0; }
+
+  .hero-cta{ display:flex; gap:16px; flex-wrap:wrap; opacity:0; animation: rise 0.8s ease forwards 0.55s; }
+
+  .btn{
+    font-family: var(--mono); font-size:0.85rem; padding:14px 26px;
+    border-radius:6px; transition: all 0.35s cubic-bezier(.2,.8,.2,1);
+    display:inline-flex; align-items:center; gap:8px;
+  }
+  .btn-primary{ background: var(--red); color:#fff; border:1px solid var(--red); }
+  .btn-primary:hover{ background: var(--red-bright); transform:translateY(-3px); box-shadow:0 10px 30px rgba(200,16,46,0.28); }
+  .btn-ghost{ border:1px solid var(--border); color: var(--text); }
+  .btn-ghost:hover{ border-color: var(--red); background: rgba(200,16,46,0.06); transform:translateY(-3px); }
+
+  @keyframes rise{ from{ opacity:0; transform:translateY(18px);} to{ opacity:1; transform:translateY(0);} }
+
+  /* ---------- Photo frame ---------- */
+  .hero-photo{ flex:0 0 auto; display:flex; justify-content:center; align-items:center; }
+  .photo-badge{
+    position:relative; width:290px; height:290px;
+    opacity:0; animation: rise 0.9s ease forwards 0.3s;
+  }
+  .photo-ring{
+    position:absolute; inset:-14px; border-radius:50%;
+    background: conic-gradient(from 0deg, var(--red-bright), transparent 25%, transparent 75%, var(--red-bright));
+    -webkit-mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    mask: radial-gradient(farthest-side, transparent calc(100% - 3px), #000 calc(100% - 3px));
+    animation: spin 12s linear infinite;
+  }
+  @keyframes spin{ to{ transform:rotate(360deg); } }
+  .photo-frame{
+    width:100%; height:100%; border-radius:50%; overflow:hidden;
+    border:5px solid var(--bg); box-shadow:0 20px 45px rgba(122,12,30,0.16);
+    background: linear-gradient(160deg, var(--red-deep), var(--red));
+    display:flex; align-items:center; justify-content:center;
+  }
+  .photo-frame img{ width:100%; height:100%; object-fit:cover; display:block; }
+  .photo-frame .placeholder-icon{ color:rgba(255,255,255,0.55); width:40%; height:40%; }
+  .photo-tag{
+    position:absolute; bottom:-6px; left:50%; transform:translateX(-50%);
+    background: var(--red); color:#fff; font-family: var(--mono); font-size:0.68rem;
+    padding:6px 16px; border-radius:20px; white-space:nowrap;
+    letter-spacing:0.05em; box-shadow:0 6px 16px rgba(122,12,30,0.3);
+  }
+
+  /* ---------- Network diagram accent (kept, recolored) ---------- */
+  .net-mini{ position:absolute; opacity:0.15; z-index:-1; }
+
+  /* ---------- Section headers ---------- */
+  .section-head{ margin-bottom:56px; }
+  .section-tag{
+    font-family: var(--mono); font-size:0.78rem; color: var(--red);
+    letter-spacing:0.12em; text-transform:uppercase; margin-bottom:12px; display:block;
+  }
+  .section-title{ font-family: var(--display); font-size:clamp(1.8rem, 3.4vw, 2.6rem); font-weight:600; }
+
+  .reveal{ opacity:0; transform:translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+  .reveal.visible{ opacity:1; transform:translateY(0); }
+
+  /* ---------- About ---------- */
+  .about-grid{ display:grid; grid-template-columns:1.1fr 0.9fr; gap:60px; align-items:start; }
+  .about-text p{ color: var(--text-muted); margin-bottom:18px; max-width:560px; }
+  .about-stats{ display:grid; grid-template-columns:1fr 1fr; gap:20px; }
+  .stat-card{
+    background: rgba(255,255,255,0.55); backdrop-filter: blur(16px);
+    border:1px solid rgba(255,255,255,0.6); border-radius:20px;
+    box-shadow: 0 8px 30px rgba(122,12,30,0.06);
+    padding:24px; transition: transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease;
+  }
+  .stat-card:hover{ transform:translateY(-5px); box-shadow: 0 16px 40px rgba(122,12,30,0.12); }
+  .stat-num{ font-family: var(--display); font-size:2rem; color: var(--red); font-weight:700; }
+  .stat-label{ font-size:0.8rem; color: var(--text-muted); margin-top:6px; font-family: var(--mono); }
+
+  /* ---------- Experience ---------- */
+  .timeline{ border-left:1px solid var(--border); padding-left:36px; display:flex; flex-direction:column; gap:44px; max-width:760px; }
+  .timeline-item{ position:relative; }
+  .timeline-item::before{
+    content:''; position:absolute; left:-42px; top:4px; width:11px; height:11px;
+    border-radius:50%; background: var(--card); border:2px solid var(--red);
+  }
+  .timeline-item.current::before{ background: var(--red); box-shadow:0 0 10px rgba(200,16,46,0.5); }
+  .timeline-meta{ font-family: var(--mono); font-size:0.76rem; color: var(--red); letter-spacing:0.05em; margin-bottom:8px; text-transform:uppercase; }
+  .timeline-role{ font-family: var(--display); font-size:1.3rem; font-weight:600; margin-bottom:4px; }
+  .timeline-org{ color: var(--text-muted); font-size:0.9rem; margin-bottom:14px; }
+  .timeline-list{ list-style:none; display:flex; flex-direction:column; gap:8px; }
+  .timeline-list li{ color: var(--text-muted); font-size:0.92rem; padding-left:20px; position:relative; }
+  .timeline-list li::before{ content:'›'; position:absolute; left:0; color: var(--red); font-family:var(--mono); }
+
+  /* ---------- Skills ---------- */
+  .skills-grid{ display:grid; grid-template-columns:repeat(auto-fit, minmax(260px,1fr)); gap:24px; }
+  .skill-card{
+    background: rgba(255,255,255,0.55); backdrop-filter: blur(16px);
+    border:1px solid rgba(255,255,255,0.6); border-radius:22px; padding:30px;
+    box-shadow: 0 8px 30px rgba(122,12,30,0.06);
+    transition: transform 0.4s cubic-bezier(.2,.8,.2,1), box-shadow 0.4s ease, background 0.4s ease;
+  }
+  .skill-card:hover{ transform:translateY(-7px); box-shadow: 0 20px 45px rgba(122,12,30,0.14); background: rgba(255,255,255,0.75); }
+  .skill-icon{
+    width:44px; height:44px; border-radius:13px;
+    background: linear-gradient(150deg, var(--red-bright), var(--red-deep));
+    display:flex; align-items:center; justify-content:center; margin-bottom:18px; color:#fff;
+    box-shadow: 0 6px 16px rgba(200,16,46,0.25);
+  }
+  .skill-name{ font-family: var(--display); font-size:1.1rem; font-weight:600; margin-bottom:8px; }
+  .skill-desc{ color: var(--text-muted); font-size:0.87rem; margin-bottom:18px; }
+  .skill-bar{ height:4px; border-radius:4px; background: rgba(200,16,46,0.08); overflow:hidden; }
+  .skill-bar-fill{
+    height:100%; background: linear-gradient(90deg, var(--red-deep), var(--red-bright));
+    width:0%; border-radius:4px; transition: width 1.4s cubic-bezier(.2,.8,.2,1);
+  }
+  .skill-pct{ font-family: var(--mono); font-size:0.72rem; color: var(--text-muted); margin-top:8px; display:block; }
+
+  .tools-strip{ display:flex; flex-wrap:wrap; gap:12px; margin-top:56px; }
+  .tool-chip{
+    font-family: var(--mono); font-size:0.78rem; padding:9px 16px; border-radius:20px;
+    background: rgba(255,255,255,0.5); backdrop-filter: blur(10px);
+    border:1px solid rgba(255,255,255,0.6); color: var(--text-muted); transition: all 0.3s ease;
+  }
+  .tool-chip:hover{ color: var(--red); background: rgba(255,255,255,0.85); transform:translateY(-2px); }
+
+  /* ---------- Contact ---------- */
+  .contact-wrap{
+    background: linear-gradient(155deg, var(--red-bright), var(--red-deep));
+    border-radius:28px; padding:64px 5%; text-align:center;
+    position:relative; overflow:hidden; color:#fff;
+  }
+  .contact-wrap::before{
+    content:''; position:absolute; width:60%; height:140%; top:-20%; right:-10%;
+    background: radial-gradient(circle, rgba(255,255,255,0.14), transparent 65%);
+  }
+  .contact-wrap > *{ position:relative; z-index:1; }
+  .contact-title{ font-family: var(--display); font-size:clamp(1.8rem,4vw,2.8rem); font-weight:700; margin-bottom:16px; }
+  .contact-sub{ color: rgba(255,255,255,0.85); margin-bottom:36px; max-width:480px; margin-inline:auto; }
+  .contact-links{ display:flex; justify-content:center; gap:16px; flex-wrap:wrap; }
+  .contact-wrap .btn-primary{ background:#fff; color: var(--red); border-color:#fff; }
+  .contact-wrap .btn-primary:hover{ background:#fff5f5; }
+  .contact-wrap .btn-ghost{ border-color: rgba(255,255,255,0.4); color:#fff; }
+  .contact-wrap .btn-ghost:hover{ background: rgba(255,255,255,0.12); border-color:#fff; }
+
+  footer{
+    text-align:center; padding:40px 5%; color: var(--text-muted);
+    font-family: var(--mono); font-size:0.78rem; border-top:1px solid var(--border);
+    position:relative; z-index:2;
+  }
+
+  @media (max-width: 860px){
+    .hero{ flex-direction:column-reverse; text-align:left; padding-top:150px; }
+    .about-grid{ grid-template-columns:1fr; }
+    .nav-links{ display:none; }
+    .photo-badge{ width:220px; height:220px; }
+  }
+</style>
+</head>
+<body>
+
+<div class="bg-glow"></div>
+
+<div class="status-strip">
+  <span><span class="dot"></span>SYSTEM STATUS: ONLINE — UPTIME 99.98%</span>
+  <span>LAST DEPLOY: 2026-08-18</span>
+</div>
+
+<nav id="mainNav">
+  <div class="logo">root@<span>ariezafrian</span>:~$</div>
+  <div class="nav-links">
+    <a href="#about">Tentang</a>
+    <a href="#experience">Pengalaman</a>
+    <a href="#skills">Keahlian</a>
+    <a href="#contact">Kontak</a>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero" id="home">
+  <div class="hero-content">
+    <span class="eyebrow">IT Support / Network Engineer / IT Infrastructure</span>
+    <h1>Your friendly<br>neighborhood  <span class="accent"><br>IT support</span></h1>
+    <p class="hero-desc">
+      Aris Afriyanto — profesional IT dengan fokus pada IT Support, network engineering, infrastruktur, CCTV.
+      Terbiasa menangani insiden, monitoring uptime, dan menjaga
+      sistem tetap berjalan tanpa gangguan.
+    </p>
+    <div class="ynwa">
+      <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21s-7-4.5-9.5-9C0.8 8.2 2.2 4.5 6 4c2-.3 3.7.7 6 3 2.3-2.3 4-3.3 6-3 3.8.5 5.2 4.2 3.5 8-2.5 4.5-9.5 9-9.5 9z"/></svg>
+      Kerja keras, kolaborasi, pantang menyerah , terus belajar — You'll Never Walk Alone.
+    </div>
+    <div class="hero-cta">
+      <a href="#contact" class="btn btn-primary">Hubungi Saya →</a>
+      <a href="#" class="btn btn-ghost">Unduh CV</a>
+    </div>
+  </div>
+
+  <div class="hero-photo">
+    <div class="photo-badge">
+      <div class="photo-ring"></div>
+      <div class="photo-frame">
+        <!-- Ganti src di bawah ini dengan foto Anda, contoh: src="foto-saya.jpg" -->
+        <img src="pic.png" alt="Foto Profil"
+             onerror="this.style.display='none'; this.nextElementSibling.style.display='flex';">
+        <svg class="placeholder-icon" style="display:flex;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.5">
+          <circle cx="12" cy="8" r="4"/><path d="M4 21c0-4.4 3.6-8 8-8s8 3.6 8 8"/>
+        </svg>
+      </div>
+      <div class="photo-tag">Aris Afriyanto</div>
+    </div>
+  </div>
+</section>
+
+<!-- ABOUT -->
+<section id="about">
+  <div class="section-head reveal">
+    <span class="section-tag">// 01 — Tentang</span>
+    <h2 class="section-title">Profil Singkat</h2>
+  </div>
+  <div class="about-grid">
+    <div class="about-text reveal">
+      <p>
+        Dengan pengalaman IT Support sejak tahun 2017, saya memiliki keahlian mendalam dalam troubleshoot hardware & software, 
+        manajemen jaringan, instalasi jaringan, serta pengelolaan Windows Server, Web Server, dan Active Directory, 
+        POS Maintenance, saya juga mempunyai keahlian dasar dalam pengembangan web.
+      </p>
+      <p>
+        Terbiasa bekerja dengan konfigurasi router/switch, manajemen web server, serta
+        mendukung sistem internal perusahaan tetap
+        berjalan optimal dan aman.
+      </p>
+    </div>
+    <div class="about-stats reveal">
+      <div class="stat-card"><div class="stat-num">8+</div><div class="stat-label">TAHUN PENGALAMAN</div></div>
+      <div class="stat-card"><div class="stat-num">50+</div><div class="stat-label">TIKET DITANGANI/BLN</div></div>
+      <div class="stat-card"><div class="stat-num">99.9%</div><div class="stat-label">SERVER UPTIME</div></div>
+    </div>
+  </div>
+</section>
+
+<!-- EXPERIENCE -->
+<section id="experience">
+  <div class="section-head reveal">
+    <span class="section-tag">// 02 — Riwayat</span>
+    <h2 class="section-title">Pengalaman Kerja</h2>
+  </div>
+  <div class="timeline">
+    <div class="timeline-item current reveal">
+      <div class="timeline-meta">2025 — Sekarang</div>
+      <div class="timeline-role">IT Staff</div>
+      <div class="timeline-org">PT. Ohlala International · Jakarta</div>
+      <ul class="timeline-list">
+        <li>Menangani troubleshooting POS , jaringan, hardware, dan software untuk branch dan karyawan Jabodetabek.</li>
+        <li>Melakukan konfigurasi dan maintenance router, switch, serta access point.</li>
+        <li>Memonitor performa PC dan memastikan operasional berjalan stabil.</li>
+        <li>CCTV Administrator, IT Infrastruktur.</li>
+      </ul>
+    </div>
+    <div class="timeline-item reveal">
+      <div class="timeline-meta">2022 — 2024</div>
+      <div class="timeline-role">IT Support</div>
+      <div class="timeline-org">PT. Pemuda Cari Cuan (Mangkokku Indonesia)</div>
+      <ul class="timeline-list">
+        <li>Menyediakan dukungan teknis harian untuk seluruh perangkat kantor dan branch.</li>
+        <li>Instalasi dan konfigurasi sistem operasi serta aplikasi kerja.</li>
+        <li>Web ticketing Administrator.</li>
+      </ul>
+    </div>
+        <div class="timeline-item reveal">
+      <div class="timeline-meta">2017 — 2022</div>
+      <div class="timeline-role">IT Support</div>
+      <div class="timeline-org">CV. Gloria Prima (Tamnak Thai, Brownbag)</div>
+      <ul class="timeline-list">
+        <li>hardware dan software troubleshooting.</li>
+        <li>Network Management</li>
+        <li>POS Maintenance</li>
+        <li>Windows Server Management</li>
+        <li>Electronic data processing</li>
+        <li>Menyediakan dukungan teknis harian untuk seluruh perangkat kantor dan branch.</li>
+        <li>Instalasi dan konfigurasi sistem operasi serta aplikasi kerja.</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<!-- SKILLS -->
+<section id="skills">
+  <div class="section-head reveal">
+    <span class="section-tag">// 03 — Kompetensi</span>
+    <h2 class="section-title">Keahlian Teknis</h2>
+  </div>
+  <div class="skills-grid">
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="5" r="2.5"/><circle cx="5" cy="19" r="2.5"/><circle cx="19" cy="19" r="2.5"/><path d="M12 7.5v6M12 13.5L5 16.5M12 13.5l7 3"/></svg>
+      </div>
+      <div class="skill-name">Network Engineering</div>
+      <div class="skill-desc">Konfigurasi routing, switching, VLAN, firewall, dan troubleshooting koneksi jaringan LAN/WAN.</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-pct="88"></div></div>
+      <span class="skill-pct">Proficiency 88%</span>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><rect x="3" y="4" width="18" height="6" rx="1"/><rect x="3" y="14" width="18" height="6" rx="1"/><circle cx="7" cy="7" r="0.8" fill="currentColor"/><circle cx="7" cy="17" r="0.8" fill="currentColor"/></svg>
+      </div>
+      <div class="skill-name">IT Infrastructure</div>
+      <div class="skill-desc">Perencanaan, instalasi, dan pemeliharaan infrastruktur IT termasuk server fisik dan virtualisasi.</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-pct="82"></div></div>
+      <span class="skill-pct">Proficiency 88%</span>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><circle cx="12" cy="12" r="9"/><path d="M3 12h18M12 3a13 13 0 010 18a13 13 0 010-18z"/></svg>
+      </div>
+      <div class="skill-name">Web Server</div>
+      <div class="skill-desc">Instalasi dan konfigurasi Apache/Nginx, manajemen SSL, hosting, dan monitoring uptime layanan.</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-pct="78"></div></div>
+      <span class="skill-pct">Proficiency 78%</span>
+    </div>
+
+    <div class="skill-card reveal">
+      <div class="skill-icon">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8"><ellipse cx="12" cy="6" rx="8" ry="3"/><path d="M4 6v6c0 1.7 3.6 3 8 3s8-1.3 8-3V6M4 12v6c0 1.7 3.6 3 8 3s8-1.3 8-3v-6"/></svg>
+      </div>
+      <div class="skill-name">MySQL Database</div>
+      <div class="skill-desc">Perancangan skema, query, backup/restore, serta optimasi performa database MySQL.</div>
+      <div class="skill-bar"><div class="skill-bar-fill" data-pct="80"></div></div>
+      <span class="skill-pct">Proficiency 80%</span>
+    </div>
+
+  </div>
+
+  <div class="tools-strip reveal">
+    <span class="tool-chip">Mikrotik</span>
+    <span class="tool-chip">Linux Server</span>
+    <span class="tool-chip">Windows Server</span>
+    <span class="tool-chip">Apache / Nginx</span>
+    <span class="tool-chip">MySQL / phpMyAdmin</span>
+    <span class="tool-chip">TCP/IP</span>
+    <span class="tool-chip">VPN</span>
+    <span class="tool-chip">Active Directory</span>
+  </div>
+</section>
+
+<!-- CONTACT -->
+<section id="contact">
+  <div class="contact-wrap reveal">
+    <h2 class="contact-title">Mari terhubung.</h2>
+    <p class="contact-sub">Terbuka untuk peluang kerja, kolaborasi, maupun diskusi seputar network engineering dan infrastruktur IT.</p>
+    <div class="contact-links">
+      <a href="mailto:ariezafrian@gmail.com" class="btn btn-primary">Kirim Email</a>
+      <a href="https://www.linkedin.com/in/aris-afriyanto-0b1b9412a/" class="btn btn-ghost">LinkedIn</a>
+      <a href="https://airtable.com/appDlPkQu25UZQEM0/pagfeC2H2QG1CPifN/form/" class="btn btn-ghost">Kolaborasi / Freelance</a>
+    </div>
+  </div>
+</section>
+
+<footer>
+  © 2026 ariezafrian — Dibuat dengan fokus pada uptime, keamanan, dan performa.
+</footer>
+
+<script>
+  const nav = document.getElementById('mainNav');
+  window.addEventListener('scroll', () => {
+    nav.classList.toggle('scrolled', window.scrollY > 40);
+  });
+
+  const revealEls = document.querySelectorAll('.reveal');
+  const observer = new IntersectionObserver((entries) => {
+    entries.forEach(entry => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('visible');
+        if (entry.target.classList.contains('skill-card')) {
+          const fill = entry.target.querySelector('.skill-bar-fill');
+          if (fill) fill.style.width = fill.dataset.pct + '%';
+        }
+        observer.unobserve(entry.target);
+      }
+    });
+  }, { threshold: 0.15 });
+
+  document.querySelectorAll('.reveal').forEach(el => observer.observe(el));
+  document.querySelectorAll('.skill-card').forEach(el => { el.classList.add('reveal'); observer.observe(el); });
+
+  document.querySelectorAll('a[href^="#"]').forEach(link => {
+    link.addEventListener('click', (e) => {
+      const target = document.querySelector(link.getAttribute('href'));
+      if (target) { e.preventDefault(); target.scrollIntoView({ behavior: 'smooth', block: 'start' }); }
+    });
+  });
+</script>
+
+</body>
+</html>
